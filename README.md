@@ -66,8 +66,8 @@ claude
 
 #### > /userinfo is not implemented by Better Auth's MCP plugin
 
-* [MCP Server needs to verify a token and fetch user information](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/2488938b784a8af208b7d252d95787ce32d27b41/apps/mcp-server/src/oauth.ts#L48)
-* [Auth Server manually implements /userinfo](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/2488938b784a8af208b7d252d95787ce32d27b41/apps/auth-server/src/index.ts#L47)
+* [MCP Server needs to verify a token and fetch user information](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/main/apps/mcp-server/src/oauth.ts#L48)
+* [Auth Server manually implements /userinfo](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/main/apps/auth-server/src/index.ts#L47)
 
 In order to pass around details like the user details, and token expiry, these needs fetching from the Auth Server by the MCP Server, but Better Auth doesn't currently provide the oauth `/authinfo` endpoint despite it documenting one in `.well-known/oauth-authorization-server`. This should change when their [oauth2.1 support](https://github.com/better-auth/better-auth/pull/4163) lands and the MCP plugin is deprecated.
 
@@ -77,7 +77,7 @@ For now we have to implement the `/userinfo` endpoint manually.
 
 #### > OAuthClientProvider doesn't provide a way to lazily boot a callback server for the oauth redirect
 
-* [MemoryOAuthProvider has to boot a long-lived HTTP server on startup](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/2488938b784a8af208b7d252d95787ce32d27b41/apps/mcp-client-cli/src/MemoryOAuthProvider.ts#L39)
+* [MemoryOAuthProvider has to boot a long-lived HTTP server on startup](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/main/apps/mcp-client-cli/src/MemoryOAuthProvider.ts#L39)
 
 Ideally, when an authentication flow is triggered by the MCP Client SDK, the client will have an opportunity to boot a HTTP server and determine its callback URL. This is easy if you're already running on a URL because you're a web client/api, but as a CLI you need to pick an available port on booting the server. But `get redirectUrl()` cannot be a promise so when you create your OAuthClientProvider instance you must already know the port.
 
@@ -85,7 +85,7 @@ Ideally this interface would be designed a little differently so a HTTP Server c
 
 #### > The ProxyOAuthServerProvider validates the client_secret but has no mechanism exposed to cache them after client registration
 
-* [OAuthRegisteredClientsStore has to be patched with a Proxy](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/2488938b784a8af208b7d252d95787ce32d27b41/apps/mcp-server/src/clients-store-patch.ts#L1)
+* [OAuthRegisteredClientsStore has to be patched with a Proxy](https://github.com/Nick-Lucas/mcp-server-client-betterauth/blob/main/apps/mcp-server/src/clients-store-patch.ts#L1)
 
 There are rich details written in the above file, but essentially the MCP Client, the MCP Server, and the Auth Server, all need to know the client_id->client_secret mappings for a given client. We are forced to implement `getClient` when instantiating ProxyOAuthServerProvider, but `registerClient` is unexposed to userland. There would be two solutions I can see:
 
