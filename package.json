@@ -1,0 +1,40 @@
+{
+  "name": "mcp-with-auth",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel --stream=true dev",
+    "test": "pnpm -r test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --check . --list-different",
+    "format:write": "prettier --write . --list-different",
+    "typecheck": "pnpm -r typecheck",
+    "db:generate": "pnpm -C libs/db db:generate",
+    "db:migrate": "pnpm -C libs/db db:migrate",
+    "db:studio": "pnpm -C libs/db db:studio",
+    "cli": "pnpm -C apps/mcp-client-cli cli",
+    "cli-install": "pnpm install -g ./apps/mcp-client-cli",
+    "cli-uninstall": "pnpm uninstall -g @mcp-with-auth/cli"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "@tanstack/eslint-config": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@mcp-with-auth/mcp-client-cli",
+  "version": "1.0.0",
+  "description": "Interactive CLI chat application",
+  "main": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "mcp-client-cli": "./src/index.ts"
+  },
+  "scripts": {
+    "cli": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "catalog:",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "ai": "catalog:",
+    "better-auth": "catalog:",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "keywords": [
+    "cli",
+    "chat",
+    "interactive"
+  ],
+  "author": "",
+  "license": "MIT"
+}

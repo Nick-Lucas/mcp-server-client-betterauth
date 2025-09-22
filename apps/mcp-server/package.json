@@ -1,0 +1,27 @@
+{
+  "name": "@mcp-with-auth/mcp-server",
+  "type": "module",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config --watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mcp-with-auth/db": "workspace:*",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "@types/cors": "catalog:",
+    "@types/express": "catalog:",
+    "@types/qs": "catalog:",
+    "better-auth": "catalog:",
+    "cors": "catalog:",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "express": "catalog:",
+    "qs": "catalog:",
+    "zod": "^3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}
