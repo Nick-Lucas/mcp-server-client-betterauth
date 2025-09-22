@@ -13,8 +13,7 @@ Documentation in both the MCP SDK and Better Auth is currently sparse and there 
 
 ## Project Components
 
-* `auth-server` a Better Auth implementation with MCP plugin enabled. The MCP plugin essentially enables oauth2.1 endpoints with Dynamic Client Registration enabled
+* `auth-server` a Better Auth implementation with MCP plugin enabled. The MCP plugin essentially enables oauth2.1 endpoints with Dynamic Client Registration enabled. Built on a drizzle-orm sqlite based database for your application, with Better Auth and its migrations already configured.
 * `auth-ui` a simple Vite/TanStack-Router project with a redirect page for signing in to Better Auth via GitHub
 * `mcp-server` a MCP Server with StreamableHTTP Transport, and ProxyOAuthServerProvider for proxying oauth requests to `auth-server`
 * `mcp-client-cli` a simple interactive CLI which uses the MCP Client SDK to communicate with `mcp-server` and negotiate authentication
-* `libs/db` the drizzle-orm sqlite based database for your application, with Better Auth and its migrations already configured

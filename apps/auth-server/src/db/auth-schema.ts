@@ -74,6 +74,13 @@ export const verification = sqliteTable("verification", {
     .notNull(),
 });
 
+export const jwks = sqliteTable("jwks", {
+  id: text("id").primaryKey(),
+  publicKey: text("public_key").notNull(),
+  privateKey: text("private_key").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
 export const oauthApplication = sqliteTable("oauth_application", {
   id: text("id").primaryKey(),
   name: text("name"),

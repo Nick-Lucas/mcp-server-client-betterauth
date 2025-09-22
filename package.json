@@ -14,9 +14,9 @@
     "format": "prettier --check . --list-different",
     "format:write": "prettier --write . --list-different",
     "typecheck": "pnpm -r typecheck",
-    "db:generate": "pnpm -C libs/db db:generate",
-    "db:migrate": "pnpm -C libs/db db:migrate",
-    "db:studio": "pnpm -C libs/db db:studio",
+    "db:generate": "pnpm -C apps/auth-server db:generate",
+    "db:migrate": "pnpm -C apps/auth-server db:migrate",
+    "db:studio": "pnpm -C apps/auth-server db:studio",
     "cli": "pnpm -C apps/mcp-client-cli cli",
     "cli-install": "pnpm install -g ./apps/mcp-client-cli",
     "cli-uninstall": "pnpm uninstall -g @mcp-with-auth/cli"

@@ -3,17 +3,26 @@
   "type": "module",
   "scripts": {
     "dev": "DOTENV_CONFIG_PATH=../../.env node -r dotenv/config --watch src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "auth:generate": "pnpx @better-auth/cli generate --config=src/auth.ts --output=src/db/auth-schema.ts --yes",
+    "db:generate": "pnpm auth:generate && drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@mcp-with-auth/db": "workspace:*",
     "@hono/node-server": "^1.19.3",
     "dotenv": "catalog:",
-    "hono": "^4.9.7"
+    "hono": "^4.9.7",
+    "better-auth": "catalog:",
+    "better-sqlite3": "catalog:",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
     "tsx": "^4.7.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@types/better-sqlite3": "catalog:",
+    "drizzle-kit": "catalog:"
   }
 }

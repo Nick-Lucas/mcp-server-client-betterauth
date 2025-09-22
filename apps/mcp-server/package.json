@@ -6,7 +6,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mcp-with-auth/db": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
     "@types/cors": "catalog:",
     "@types/express": "catalog:",

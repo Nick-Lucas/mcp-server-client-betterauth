@@ -8,40 +8,26 @@ import { requireBearerAuth } from '@modelcontextprotocol/sdk/server/auth/middlew
 // Resolve type portability error from MCP SDK
 import 'qs'
 
-import { db, oauthAccessToken, user } from '@mcp-with-auth/db'
-import { eq } from 'drizzle-orm'
 import type { AuthInfo } from '@modelcontextprotocol/sdk/server/auth/types.js'
+import { patchClientStoreOnProxyProvider } from './clients-store-patch.ts'
 
-const proxyProvider = new ProxyOAuthServerProvider({
-  endpoints: {
-    authorizationUrl: 'http://localhost:3000/api/auth/mcp/authorize',
-    tokenUrl: 'http://localhost:3000/api/auth/mcp/token',
-    registrationUrl: 'http://localhost:3000/api/auth/mcp/register',
-  },
-  verifyAccessToken,
-  fetch(uri, init) {
-    return fetch(uri, init)
-  },
-  getClient: async (client_id) => {
-    console.log('[ProxyOAuthServerProvider] getClient', client_id)
-
-    const client = await db.query.oauthApplication.findFirst({
-      where(fields, operators) {
-        return operators.eq(fields.clientId, client_id)
+/**
+ * See clients-store-patch.ts for explanation of why patchClientStoreOnProxyProvider is needed
+ */
+const proxyProvider = patchClientStoreOnProxyProvider(
+  (getClient) =>
+    new ProxyOAuthServerProvider({
+      endpoints: {
+        authorizationUrl: 'http://localhost:3000/api/auth/mcp/authorize',
+        tokenUrl: 'http://localhost:3000/api/auth/mcp/token',
+        registrationUrl: 'http://localhost:3000/api/auth/mcp/register',
+      },
+      verifyAccessToken,
+      async getClient(clientId) {
+        return await getClient(clientId)
       },
     })
-
-    if (!client) {
-      throw new Error('Client not found')
-    }
-
-    return {
-      client_id,
-      client_secret: client.clientSecret!,
-      redirect_uris: [client.redirectURLs!],
-    }
-  },
-})
+)
 
 export const oauthProxyMiddleware = mcpAuthRouter({
   provider: proxyProvider,
@@ -50,6 +36,7 @@ export const oauthProxyMiddleware = mcpAuthRouter({
 
 export const bearerTokenMiddleware = requireBearerAuth({
   requiredScopes: [],
+  // requiredScopes: ['openid', 'profile', 'email'],
   resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(
     new URL('http://localhost:3001/')
   ),
@@ -59,34 +46,45 @@ export const bearerTokenMiddleware = requireBearerAuth({
 })
 
 async function verifyAccessToken(token: string): Promise<AuthInfo> {
-  // FIXME: better-auth docs are lacking in how to achieve this via the SDK with a access/bearer token
-  const usersInfo = await db
-    .select()
-    .from(oauthAccessToken)
-    .innerJoin(user, eq(oauthAccessToken.userId, user.id))
-    .where(eq(oauthAccessToken.accessToken, token))
-    .limit(1)
+  const response = await fetch('http://localhost:3000/api/auth/mcp/userinfo', {
+    headers: {
+      Cookie: `better-auth.session_token=${token}`,
+      Authorization: `Bearer ${token}`,
+    },
+  })
 
-  if (usersInfo.length !== 1) {
+  if (!response.ok) {
+    const body = await response.text()
+    console.error('Failed to fetch user info:', response.status, body)
+
     throw new Error('Invalid access token')
   }
 
-  const session = usersInfo[0]
-  if (!session) {
-    throw new Error('Invalid access token')
+  type UserInfo = {
+    active: true
+    sub: string
+    scope: string[]
+    client_id: string
+    exp: number
+    aud: string
+    user: {
+      id: string
+      email?: string
+      name?: string
+    }
   }
+
+  const userInfo = (await response.json()) as UserInfo
 
   return {
     token,
-    clientId: session.oauth_access_token.clientId!,
-    scopes: session.oauth_access_token.scopes!.split(' '),
-    expiresAt: Math.floor(
-      session.oauth_access_token.accessTokenExpiresAt!.valueOf()
-    ),
+    clientId: userInfo.client_id,
+    scopes: userInfo.scope,
+    expiresAt: Math.floor(userInfo.exp / 1000),
     extra: {
-      userId: session.user.id,
-      userEmail: session.user.email,
-      userName: session.user.name,
+      userId: userInfo.user.id,
+      userEmail: userInfo.user.email,
+      userName: userInfo.user.name,
     },
   }
 }
