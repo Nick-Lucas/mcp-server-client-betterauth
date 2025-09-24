@@ -1,3 +1,4 @@
+
 # MCP Client + Server with Better Auth
 
 The goal of this project is to provide a model implementation of the Model Context Protocol Typescript SDK, both on the Server and the Client, over Streamable HTTP, and with an external OAuth server provided by Better Auth.
